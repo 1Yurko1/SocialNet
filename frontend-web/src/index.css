@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  /* Здесь мы можем определять свои цвета, шрифты и т.д. */
+  --color-brand-blue: #3b82f6;
+  --color-brand-dark: #1e293b;
+}
+
+/* Можно добавлять свои глобальные стили прямо тут */
+body {
+  @apply bg-gray-50 text-gray-900;
+}
