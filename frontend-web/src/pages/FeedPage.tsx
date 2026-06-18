@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import api from '../api/axios';
 import { type Post } from '../types';
-import { Heart, MessageCircle, Send, Image as ImageIcon } from 'lucide-react';
+import {Heart, MessageCircle, Send, Image as ImageIcon, MessageSquare} from 'lucide-react';
+import {useNavigate} from "react-router-dom";
 
 export default function FeedPage() {
+    const navigate = useNavigate();
     const [posts, setPosts] = useState<Post[]>([]);
     const [content, setContent] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
@@ -136,13 +138,26 @@ export default function FeedPage() {
         <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
             <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 p-4">
                 <div className="max-w-2xl mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-black text-blue-600 tracking-tight">SocialNet</h1>
-                    <button
-                        onClick={() => { localStorage.removeItem('token'); window.location.reload(); }}
-                        className="text-sm font-medium text-slate-500 hover:text-red-500 transition-colors"
-                    >
-                        Logout
-                    </button>
+                    <h1 className="text-2xl font-black text-blue-600 tracking-tight cursor-pointer" onClick={() => navigate('/feed')}>
+                        SocialNet
+                    </h1>
+                    <div className="flex items-center gap-4">
+                        {/* КНОПКА ПЕРЕХОДА В ЧАТЫ */}
+                        <button
+                            onClick={() => navigate('/chat')}
+                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all"
+                            title="Messages"
+                        >
+                            <MessageSquare size={22} />
+                        </button>
+
+                        <button
+                            onClick={() => { localStorage.removeItem('token'); window.location.reload(); }}
+                            className="text-sm font-medium text-slate-500 hover:text-red-500 transition-colors"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </nav>
 
