@@ -1,10 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { useChatStore } from '../store/chatStore';
 import api from '../api/axios';
-import {MessageCircle, Search, Send, User as UserIcon} from 'lucide-react';
+import {ArrowLeft, MessageCircle, Search, Send, User as UserIcon} from 'lucide-react';
 import type {WSMessage, User} from '../types';
+import {useNavigate} from "react-router-dom";
 
 export default function ChatPage() {
+    const navigate = useNavigate()
     const { messages, activeChatId, activeUserId, setActiveChat, addMessage } = useChatStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [users, setUsers] = useState<User[]>([]);
@@ -120,7 +122,16 @@ export default function ChatPage() {
             {/* ЛЕВАЯ ПАНЕЛЬ */}
             <div className="w-80 border-r border-slate-200 flex flex-col bg-slate-50">
                 <div className="p-4 border-b bg-white">
-                    <h2 className="text-xl font-bold mb-4 text-slate-800">Messages</h2>
+                    <div className="flex items-center gap-2 mb-4">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="p-1 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+                            title="Back to Feed"
+                        >
+                            <ArrowLeft size={20} />
+                        </button>
+                        <h2 className="text-xl font-bold text-slate-800">Messages</h2>
+                    </div>
                     <div className="relative">
                         <input
                             className="w-full p-2 pl-10 bg-slate-100 rounded-xl outline-none text-sm focus:ring-2 focus:ring-blue-500 transition-all"
