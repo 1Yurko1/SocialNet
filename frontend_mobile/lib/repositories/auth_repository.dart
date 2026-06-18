@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../api/dio_client.dart';
+import '../bloc/auth/auth_bloc.dart';
 
 class AuthRepository {
   final ApiClient _apiClient = ApiClient();
@@ -8,7 +9,7 @@ class AuthRepository {
 
   // Регистрация
   Future<void> register(String username, String email, String password) async {
-    await _apiClient.dio.post('/auth/register', data: {
+    await _apiClient.dio.post('auth/register', data: {
       'username': username,
       'email': email,
       'password': password,
@@ -21,6 +22,9 @@ class AuthRepository {
       'username': username,
       'password': password,
     });
+
+    if (response.statusCode == 401)
+      throw const AuthException('Неверный логин или пароль');
 
     String token = response.data['token'];
     await _storage.write(key: 'token', value: token); // Сохраняем JWT

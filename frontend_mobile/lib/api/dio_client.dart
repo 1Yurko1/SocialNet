@@ -2,28 +2,41 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
-  final Dio dio = Dio(BaseOptions(
-    baseUrl: 'http://localhost:8080/api/v1',
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
-  ));
+  static const String _baseUrl = 'http://192.168.1.71:8080/api/v1';
 
-  final _storage = const FlutterSecureStorage();
+  final Dio dio;
+  final FlutterSecureStorage _storage;
 
-  ApiClient() {
+  ApiClient({
+    Dio? dio,
+    FlutterSecureStorage? storage,
+  })  : dio = dio ?? Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 10), // 4. Увеличен таймаут чтения
+        )),
+        _storage = storage ?? const FlutterSecureStorage() {
+    _setupInterceptors();
+  }
+
+  void _setupInterceptors() {
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        String? token = await _storage.read(key: 'token');
-        if (token != null) {
+        final token = await _storage.read(key: 'token');
+        if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
-        return handler.next(options);
+        handler.next(options);
       },
-      onError: (DioException e, handler) {
+      onError: (DioException e, handler) async {
         if (e.response?.statusCode == 401) {
+          // TODO: Добавить логику обновления токена (refresh token)
+          // Если рефреш не удался — выполнить выход из аккаунта
 
+          // Пример: предотвращение бесконечного цикла при ошибке рефреша
+          // if (!_isRefreshing) { ... }
         }
-        return handler.next(e);
+        handler.next(e);
       },
     ));
   }
